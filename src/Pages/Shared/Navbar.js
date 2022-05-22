@@ -4,25 +4,56 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom";
 import auth from "../../firebase.init";
 import './Navbar.css';
+import userPhoto from '../../assets/images/profile.jpg';
+import blankUser from '../../assets/images/blank_profile.jpg';
 
 const Navbar = () => {
   const [user] = useAuthState(auth);
 
     const logout = () => {
         signOut(auth);
+        localStorage.removeItem('accessToken');
     };
 
   const menuItems = (
     <>
       <li><Link to="/">Home</Link></li>
       <li><Link to="/appointment">Appointment</Link></li>
-      <li><Link to="/review">Review</Link></li>
-      <li><Link to="/contact">Contact</Link></li>
-      <li><Link to="/about">About</Link></li>
+      {/* <li><Link to="/review">Review</Link></li> */}
+      {/* <li><Link to="/contact">Contact</Link></li> */}
+      {/* <li><Link to="/about">About</Link></li> */}
+
       {
         user && <li><Link to="/dashboard">Dashboard</Link></li>
       }
-      <li>{user ? <button className="btn btn-ghost capitalize"  onClick={logout} >Sign Out</button> : <Link to="/login">Login</Link>}</li>
+
+      <li><Link to="/signup">Sign Up</Link></li>
+
+      {
+        user && <li><Link to="/dashboard">{user.displayName}</Link></li>
+      }
+
+      <div className="dropdown dropdown-end">
+      <label tabIndex="0" className="btn btn-ghost btn-circle avatar">
+        <div className="w-12 rounded-full">
+          {
+            user ? <img src={user.photoURL ? user.photoURL : blankUser} alt=""/>
+            : <img src={userPhoto} alt=""/>
+          }
+        </div>
+      </label>
+      <ul tabIndex="0" className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+        {
+          user && <li>
+          <a className="justify-between">
+            My Profile
+          </a>
+        </li>
+        }
+        <li>{user ? <button className="btn btn-ghost capitalize sm:flex sm:flex-start"  onClick={logout} >Log Out</button> : <Link to="/login">Login</Link>}</li>
+      </ul>
+    </div>
+
     </>
   );
   return (
